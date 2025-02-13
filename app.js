@@ -4,6 +4,7 @@ import fastify from 'fastify'
 import { PORT } from './src/config/config.js'
 import {registerRoutes} from './src/routes/index.js'
 import fastifySocketIO from 'fastify-socket.io'
+import { admin, buildAdminRouter } from './src/config/setup.js'
 
 const start = async()=>{
     await connectDB(process.env.MONGO_URI)
@@ -20,11 +21,13 @@ const start = async()=>{
 
     await registerRoutes(app)
 
+    await buildAdminRouter(app)
+
     app.listen({port:PORT, host:'0.0.0.0'}, (err, addr) => {
         if(err){
             console.log(err)
         }else{
-            console.log(`Instashop is running on https://localhost:${PORT}`)
+            console.log(`Instashop is running on https://localhost:${PORT}${admin.options.rootPath}`)
         }
     })
 
